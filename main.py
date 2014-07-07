@@ -5,6 +5,9 @@ from math import *
 
 pygame.init()
 pygame.mixer.init()
+pygame.font.init()
+
+
 
 WIDTH = 960
 HEIGHT = 640
@@ -30,9 +33,12 @@ gravity = 0 # (default: 1.25)
 totalFrames = 0
 canShoot = True
 EnemyList = []
+Score = 0
 
 laser = pygame.mixer.Sound("sounds/shoot.wav")
 ground = pygame.image.load("images/ground.png")
+font = pygame.font.Font(None, 36)
+
 
 
 
@@ -54,14 +60,14 @@ def Shoot():
 	projectile = Projectile(player.xPos, player.yPos, 8, 8)
 
 	if projectile.xPos < mPos[0]:
-		projectile.xVel = (mPos[0]-player.xPos)/(randint(9,11))
+		projectile.xVel = (mPos[0]-player.xPos)/(uniform(9.5,10.5))
 	elif projectile.xPos > mPos[0]:
-		projectile.xVel = (mPos[0]-player.xPos)/(randint(9,11))
+		projectile.xVel = (mPos[0]-player.xPos)/(uniform(9.5,10.5))
 
 	if projectile.yPos < mPos[1]:
-		projectile.yVel = ((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(randint(9,11))
+		projectile.yVel = ((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(uniform(9.5,10.5))
 	elif projectile.yPos > mPos[1]:
-		projectile.yVel = -((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(randint(9,11))
+		projectile.yVel = -((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(uniform(9.5,10.5))
 
 	projectileList.append(projectile)
 
@@ -125,16 +131,31 @@ while True:
 
 	screen.blit(ground, (0, 0))
 
+	text = font.render(str(Score), 1, (10, 10, 10))
+	screen.blit(text, (10,10))
+
 	for i in projectileList:
 		i.render(screen)
-		for enemy in EnemyList:
-			enemy.xPos += enemy.xVel
-			collide = enemy.detectCollisions(enemy.xPos, enemy.yPos, enemy.width, enemy.height, i.xPos, i.yPos, i.width, i.height)
+		if i.yPos < 0 or i.xPos < 0 or i.xPos > WIDTH:
+			projectileList.remove(i)
+			print(len(projectileList))
+
+	for enemy in EnemyList:
+		enemy.xPos += enemy.xVel
+		if enemy.xPos > WIDTH:
+			EnemyList.remove(enemy)
+
+		for projectile in projectileList:
+			collide = enemy.detectCollisions(projectile.xPos, projectile.yPos, projectile.width, projectile.height, enemy.xPos, enemy.yPos, enemy.width, enemy.height)
 			if collide:
 				print('HIT')
 				EnemyList.remove(enemy)
+				Score += 1
 			if enemy.xPos >= WIDTH + 64:
 				EnemyList.remove(enemy)
+
+		enemy.render(screen)
+
 
 	for cloud in CloudList:
 
@@ -145,7 +166,7 @@ while True:
 			CloudList.remove(cloud)
 
 	if totalFrames % 60 == 0:
-		NCX = randint(-2000, 0)
+		NCX = randint(-100, 0)
 		NCY = randint(64, 128)
 
 		NewCloud = Cloud(NCX, NCY, 128, 64)
@@ -160,10 +181,6 @@ while True:
 		EnemyList.append(NewEnemy)
 
 	player.render(screen)
-
-	for enemy in EnemyList:
-
-		enemy.render(screen)
 
 	pygame.draw.circle(screen, (200, 60, 70), (mPos[0], mPos[1]), 2)
 	pygame.draw.circle(screen, (200,200,200), (mPos[0], mPos[1]),15,2)

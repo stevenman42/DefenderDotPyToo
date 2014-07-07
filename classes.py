@@ -60,7 +60,7 @@ class Enemy(Character):
 
 	def __init__(self, xPos, yPos, width, height):
 
-		self.xVel = uniform(0.05,0.1)
+		self.xVel = uniform(4,5)
 		self.yVel = 0
 		yPos = randint(64,250)
 		Character.__init__(self, xPos, yPos, width, height)
