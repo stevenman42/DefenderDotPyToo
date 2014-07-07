@@ -18,7 +18,7 @@ screen = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption("Defender")
 
 clock = pygame.time.Clock()
-pygame.event.set_grab(1)
+# pygame.event.set_grab(1)
 pygame.mouse.set_visible(0)
 
 
