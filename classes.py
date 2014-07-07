@@ -36,8 +36,7 @@ class Enemy(Character):
 
 		self.xVel = randint(2,6)
 		self.yVel = 0
-
-
+		yPos = randint(64,250)
 		Character.__init__(self, xPos, yPos, width, height)
 
 class Projectile(Character):
@@ -81,7 +80,6 @@ class Cloud(Character):
 		image = pygame.image.load(self.image_location)
 
 		screen.blit(image, (self.xPos, self.yPos))
-
 
 
 		
