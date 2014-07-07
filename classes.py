@@ -1,8 +1,9 @@
 import pygame
 from random import randint
 
-BLUE = ( 50, 80,220)
-RED  = (230, 70, 90)
+BLUE = 	( 50, 80,220)
+RED  = 	(230, 70, 90)
+BLACK =	(  0,  0,  0)
 
 class Character(object):
 
@@ -18,6 +19,32 @@ class Character(object):
 
 		pygame.draw.rect(screen, (RED), (self.xPos, self.yPos, self.width, self.height))
 
+	def detectCollisions(self,x1,y1,w1,h1,x2,y2,w2,h2):
+
+		self.x1 = x1
+		self.y1 = y1
+		self.w1 = w1
+		self.h1 = h1
+		self.x2 = x2
+		self.y2 = y2
+		self.w2 = w2	
+		self.h2 = h2
+
+		if self.x2 + self.w2 >= self.x1 >= self.x2 and self.y2 + self.h2 >= self.y1 >= self.y2:
+			return True
+
+		elif self.x2 + self.w2 >= self.x1 + self.w1 >= self.x2 and self.y2 + self.h2 >= self.y1 >= self.y2:
+			return True
+
+		elif self.x2 + self.w2 >= self.x1 >= self.x2 and self.y2 + self.h2 >= self.y1 + self.h1 >= self.y2:
+			return True
+
+		elif self.x2 + self.w2 >= self.x1 + self.w1 >= self.x2 and self.y2 + self.h2 >= self.y1 + self.h1 >= self.y2:
+			return True
+
+		else:
+			return False
+
 
 class Player(Character):
 
@@ -26,18 +53,20 @@ class Player(Character):
 		self.xVel = 0
 		self.yVel = 0
 
-
-
 		Character.__init__(self, xPos, yPos, width, height)
 
 class Enemy(Character):
 
 	def __init__(self, xPos, yPos, width, height):
 
-		self.xVel = randint(2,6)
+		self.xVel = randint(1,1)
 		self.yVel = 0
 		yPos = randint(64,250)
 		Character.__init__(self, xPos, yPos, width, height)
+
+	def render(self, screen):
+
+		pygame.draw.rect(screen, BLACK, (self.xPos, self.yPos, self.width, self.height))
 
 class Projectile(Character):
 

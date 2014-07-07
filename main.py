@@ -29,9 +29,12 @@ shootCount = 0
 gravity = 0 # (default: 1.25)
 totalFrames = 0
 canShoot = True
+EnemyList = []
 
 laser = pygame.mixer.Sound("sounds/shoot.wav")
 ground = pygame.image.load("images/ground.png")
+
+
 
 
 
@@ -124,6 +127,14 @@ while True:
 
 	for i in projectileList:
 		i.render(screen)
+		for enemy in EnemyList:
+			enemy.xPos += enemy.xVel
+			collide = enemy.detectCollisions(enemy.xPos, enemy.yPos, enemy.width, enemy.height, i.xPos, i.yPos, i.width, i.height)
+			if collide:
+				print('HIT')
+				EnemyList.remove(enemy)
+			if enemy.xPos >= WIDTH + 64:
+				EnemyList.remove(enemy)
 
 	for cloud in CloudList:
 
@@ -141,7 +152,18 @@ while True:
 
 		CloudList.append(NewCloud)
 
+		NEX = randint(-2000,0)
+		NEY = randint(64,128)
+
+		NewEnemy = Enemy(NEX, NEY, 32, 16)
+
+		EnemyList.append(NewEnemy)
+
 	player.render(screen)
+
+	for enemy in EnemyList:
+
+		enemy.render(screen)
 
 	pygame.draw.circle(screen, (200, 60, 70), (mPos[0], mPos[1]), 2)
 	pygame.draw.circle(screen, (200,200,200), (mPos[0], mPos[1]),15,2)
