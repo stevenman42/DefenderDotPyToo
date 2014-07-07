@@ -1,5 +1,6 @@
 import pygame
 from random import randint
+from random import uniform
 
 BLUE = 	( 50, 80,220)
 RED  = 	(230, 70, 90)
@@ -59,7 +60,7 @@ class Enemy(Character):
 
 	def __init__(self, xPos, yPos, width, height):
 
-		self.xVel = randint(1,1)
+		self.xVel = uniform(0.05,0.1)
 		self.yVel = 0
 		yPos = randint(64,250)
 		Character.__init__(self, xPos, yPos, width, height)
