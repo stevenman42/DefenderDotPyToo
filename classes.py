@@ -62,11 +62,11 @@ class Cloud(Character):
 		cloudnum = randint(0,2)
 
 		if cloudnum == 0:
-			self.image_location = "/Users/Steven2/Desktop/Defender/images/cloud0.png"
+			self.image_location = "images/cloud0.png"
 		elif cloudnum == 1:
-			self.image_location = "/Users/Steven2/Desktop/Defender/images/cloud1.png"
+			self.image_location = "images/cloud1.png"
 		elif cloudnum == 2:
-			self.image_location = "/Users/Steven2/Desktop/Defender/images/cloud1.png"
+			self.image_location = "images/cloud1.png"
 
 		self.xVel = randint(1,4)
 		self.yVel = 0

@@ -30,8 +30,8 @@ gravity = 0 # (default: 1.25)
 totalFrames = 0
 canShoot = True
 
-laser = pygame.mixer.Sound("/Users/Steven2/Desktop/Defender/sounds/shoot.wav")
-ground = pygame.image.load("/Users/Steven2/Desktop/Defender/images/ground.png")
+laser = pygame.mixer.Sound("sounds/shoot.wav")
+ground = pygame.image.load("images/ground.png")
 
 
 
@@ -51,14 +51,14 @@ def Shoot():
 	projectile = Projectile(player.xPos, player.yPos, 8, 8)
 
 	if projectile.xPos < mPos[0]:
-		projectile.xVel = (mPos[0]-player.xPos)/10
+		projectile.xVel = (mPos[0]-player.xPos)/(randint(9,11))
 	elif projectile.xPos > mPos[0]:
-		projectile.xVel = (mPos[0]-player.xPos)/10
+		projectile.xVel = (mPos[0]-player.xPos)/(randint(9,11))
 
 	if projectile.yPos < mPos[1]:
-		projectile.yVel = ((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/10
+		projectile.yVel = ((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(randint(9,11))
 	elif projectile.yPos > mPos[1]:
-		projectile.yVel = -((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/10
+		projectile.yVel = -((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(randint(9,11))
 
 	projectileList.append(projectile)
 
