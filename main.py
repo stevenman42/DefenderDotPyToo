@@ -88,7 +88,7 @@ while True:
 
 			if event.key == pygame.K_LEFT:
 
-				pass
+				player.xVel = -10
 
 			elif event.key == pygame.K_RIGHT:
 
@@ -98,6 +98,12 @@ while True:
 
 				pygame.quit()
 				sys.exit()
+
+		elif event.type == pygame.KEYUP:
+
+			if event.key == pygame.K_LEFT:
+
+				player.xVel = 0
 
 
 	player.xPos += player.xVel
@@ -134,6 +140,15 @@ while True:
 	text = font.render(str(Score), 1, (10, 10, 10))
 	screen.blit(text, (10,10))
 
+
+	for cloud in CloudList:
+
+		cloud.xPos += cloud.xVel
+		cloud.render(screen)
+
+		if cloud.xPos >= WIDTH + 128:
+			CloudList.remove(cloud)
+
 	for i in projectileList:
 		i.render(screen)
 		if i.yPos < 0 or i.xPos < 0 or i.xPos > WIDTH:
@@ -144,26 +159,23 @@ while True:
 		enemy.xPos += enemy.xVel
 		if enemy.xPos > WIDTH:
 			EnemyList.remove(enemy)
+			Score -= 1
 
 		for projectile in projectileList:
 			collide = enemy.detectCollisions(projectile.xPos, projectile.yPos, projectile.width, projectile.height, enemy.xPos, enemy.yPos, enemy.width, enemy.height)
 			if collide:
 				print('HIT')
 				EnemyList.remove(enemy)
+				projectileList.remove(projectile)
 				Score += 1
 			if enemy.xPos >= WIDTH + 64:
 				EnemyList.remove(enemy)
 
+
 		enemy.render(screen)
 
 
-	for cloud in CloudList:
 
-		cloud.xPos += cloud.xVel
-		cloud.render(screen)
-
-		if cloud.xPos >= WIDTH + 128:
-			CloudList.remove(cloud)
 
 	if totalFrames % 60 == 0:
 		NCX = randint(-100, 0)
@@ -183,7 +195,7 @@ while True:
 	player.render(screen)
 
 	pygame.draw.circle(screen, (200, 60, 70), (mPos[0], mPos[1]), 2)
-	pygame.draw.circle(screen, (200,200,200), (mPos[0], mPos[1]),15,2)
+	pygame.draw.circle(screen, (0,0,0), (mPos[0], mPos[1]),15,2)
 
 	clock.tick(60)
 
