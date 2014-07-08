@@ -41,17 +41,19 @@ Score = 0
 Lives = 10
 Money = 0
 
-ActiveWeapon = 'laser'
-ActiveWeaponIcon = LaserIcon
-
 MortarIcon = pygame.image.load("images/mortar_icon.png")
 LaserIcon = pygame.image.load("images/laser_icon.png")
 ground = pygame.image.load("images/ground.png")
+
+tank = pygame.image.load("images/tank.png")
 
 laser = pygame.mixer.Sound("sounds/shoot.wav")
 mortarSound = pygame.mixer.Sound("sounds/mortar.wav")
 MortarDrop = pygame.mixer.Sound("sounds/mortardrop.wav")
 font = pygame.font.Font(None, 36)
+
+ActiveWeapon = 'laser'
+ActiveWeaponIcon = LaserIcon
 
 
 def GetMousePos():
@@ -132,6 +134,9 @@ def Shoot():
 
 while True:
 
+
+# Keyboard Input #
+
 	for event in pygame.event.get():
 
 		if event.type == pygame.QUIT:
@@ -172,6 +177,8 @@ while True:
 				pass
 				# player.xVel = 0
 
+# End Keyboard Input #
+
 
 	player.xPos += player.xVel
 	player.yPos += player.yVel
@@ -201,7 +208,7 @@ while True:
 		canShoot = True
 
 
-	screen.fill(SKY_BLUE)
+	# screen.fill(SKY_BLUE)
 
 	screen.blit(ground, (0, 0))
 
@@ -259,7 +266,7 @@ while True:
 		mortar.xPos += mortar.xVel
 		mortar.yVel += gravity
 		mortar.render(screen)
-		if mortar.xPos > HEIGHT:
+		if mortar.yPos > HEIGHT:
 			MortarList.remove(mortar)
 			MortarDrop.play(loops = 0)
 
@@ -289,14 +296,10 @@ while True:
 	if totalFrames % 60 == 0:
 		NCX = randint(-100, -50)
 		NCY = randint(64, 128)
-
 		NewCloud = Cloud(NCX, NCY, 128, 64)
-
 		CloudList.append(NewCloud)
 
-		aoeuaoeua = 1
-
-		for i in range(aoeuaoeua):
+		if randint(1,2) == 1:
 
 			NEX = randint(-100,0)
 			NEY = randint(64,300)

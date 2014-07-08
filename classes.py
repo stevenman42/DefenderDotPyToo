@@ -67,13 +67,21 @@ class Enemy(Character):
 		self.type = type
 		if self.type == 'tank':
 			self.xVel = 1
+			self.image_location = "images/tank.png"
+			self.tank_img = pygame.image.load(self.image_location)
 		# yPos = randint(64,250)
 		Character.__init__(self, xPos, yPos, width, height)
 
 
 	def render(self, screen):
 
-		pygame.draw.rect(screen, BLACK, (self.xPos, self.yPos, self.width, self.height))
+		if self.type == 'tank':
+
+			screen.blit(self.tank_img, (self.xPos, self.yPos))
+
+		else:
+
+			pygame.draw.rect(screen, BLACK, (self.xPos, self.yPos, self.width, self.height))
 
 
 
