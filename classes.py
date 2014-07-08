@@ -62,7 +62,7 @@ class Enemy(Character):
 
 	def __init__(self, xPos, yPos, width, height, type):
 
-		self.xVel = uniform(4,5)
+		self.xVel = uniform(2,3)
 		self.yVel = 0
 		self.type = type
 		if self.type == 'tank':
