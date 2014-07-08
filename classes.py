@@ -16,35 +16,37 @@ class Character(object):
 		self.width = width
 		self.height = height
 
+		self.rect = pygame.Rect(self.xPos,self.yPos,self.width,self.height)
+
 	def render(self, screen):
 
 		pygame.draw.rect(screen, (RED), (self.xPos, self.yPos, self.width, self.height))
 
-	def detectCollisions(self,x1,y1,w1,h1,x2,y2,w2,h2):
+	# def detectCollisions(self,x1,y1,w1,h1,x2,y2,w2,h2):
 
-		self.x1 = x1
-		self.y1 = y1
-		self.w1 = w1
-		self.h1 = h1
-		self.x2 = x2
-		self.y2 = y2
-		self.w2 = w2	
-		self.h2 = h2
+	# 	self.x1 = x1
+	# 	self.y1 = y1
+	# 	self.w1 = w1
+	# 	self.h1 = h1
+	# 	self.x2 = x2
+	# 	self.y2 = y2
+	# 	self.w2 = w2	
+	# 	self.h2 = h2
 
-		if self.x2 + self.w2 >= self.x1 >= self.x2 and self.y2 + self.h2 >= self.y1 >= self.y2:
-			return True
+	# 	if self.x2 + self.w2 >= self.x1 >= self.x2 and self.y2 + self.h2 >= self.y1 >= self.y2:
+	# 		return True
 
-		elif self.x2 + self.w2 >= self.x1 + self.w1 >= self.x2 and self.y2 + self.h2 >= self.y1 >= self.y2:
-			return True
+	# 	elif self.x2 + self.w2 >= self.x1 + self.w1 >= self.x2 and self.y2 + self.h2 >= self.y1 >= self.y2:
+	# 		return True
 
-		elif self.x2 + self.w2 >= self.x1 >= self.x2 and self.y2 + self.h2 >= self.y1 + self.h1 >= self.y2:
-			return True
+	# 	elif self.x2 + self.w2 >= self.x1 >= self.x2 and self.y2 + self.h2 >= self.y1 + self.h1 >= self.y2:
+	# 		return True
 
-		elif self.x2 + self.w2 >= self.x1 + self.w1 >= self.x2 and self.y2 + self.h2 >= self.y1 + self.h1 >= self.y2:
-			return True
+	# 	elif self.x2 + self.w2 >= self.x1 + self.w1 >= self.x2 and self.y2 + self.h2 >= self.y1 + self.h1 >= self.y2:
+	# 		return True
 
-		else:
-			return False
+	# 	else:
+	# 		return False
 
 
 class Player(Character):
@@ -65,9 +67,12 @@ class Enemy(Character):
 		yPos = randint(64,250)
 		Character.__init__(self, xPos, yPos, width, height)
 
+
 	def render(self, screen):
 
 		pygame.draw.rect(screen, BLACK, (self.xPos, self.yPos, self.width, self.height))
+
+
 
 class Projectile(Character):
 

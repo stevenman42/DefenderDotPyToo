@@ -201,7 +201,7 @@ while True:
 
 # Weapon Icons #
 
-	screen.blit(ActiveWeaponIcon, (10, 80))
+	screen.blit(ActiveWeaponIcon, (-30, 50))
 
 
 
@@ -235,8 +235,18 @@ while True:
 			Lives -= 1
 
 		for projectile in projectileList:
-			collide = enemy.detectCollisions(projectile.xPos, projectile.yPos, projectile.width, projectile.height, enemy.xPos, enemy.yPos, enemy.width, enemy.height)
-			if collide:
+			# collide = enemy.detectCollisions(projectile.xPos, projectile.yPos, projectile.width, projectile.height, enemy.xPos, enemy.yPos, enemy.width, enemy.height)
+			# if collide:
+			# 	print('HIT')
+			# 	EnemyList.remove(enemy)
+			# 	projectileList.remove(projectile)
+			# 	Score += 1
+			# 	Money += 5
+
+			enemy.rect = pygame.Rect(enemy.xPos,enemy.yPos,enemy.width,enemy.height)
+			projectile.rect = pygame.Rect(projectile.xPos,projectile.yPos,projectile.width,projectile.height)
+
+			if projectile.rect.colliderect(enemy.rect):
 				print('HIT')
 				EnemyList.remove(enemy)
 				projectileList.remove(projectile)
