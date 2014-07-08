@@ -60,11 +60,14 @@ class Player(Character):
 
 class Enemy(Character):
 
-	def __init__(self, xPos, yPos, width, height):
+	def __init__(self, xPos, yPos, width, height, type):
 
 		self.xVel = uniform(4,5)
 		self.yVel = 0
-		yPos = randint(64,250)
+		self.type = type
+		if self.type == 'tank':
+			self.xVel = 1
+		# yPos = randint(64,250)
 		Character.__init__(self, xPos, yPos, width, height)
 
 

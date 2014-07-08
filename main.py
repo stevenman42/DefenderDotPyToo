@@ -30,33 +30,28 @@ player = Player((960/2),(640-32),16,32)
 projectileList = []
 CloudList = []
 MortarList = []
+TankList = []
+EnemyList = []
 
 shootCount = 0
 gravity = 2
 totalFrames = 0
 canShoot = True
-EnemyList = []
 Score = 0
 Lives = 10
 Money = 0
+
 ActiveWeapon = 'laser'
+ActiveWeaponIcon = LaserIcon
 
 MortarIcon = pygame.image.load("images/mortar_icon.png")
 LaserIcon = pygame.image.load("images/laser_icon.png")
-
-ActiveWeaponIcon = LaserIcon
+ground = pygame.image.load("images/ground.png")
 
 laser = pygame.mixer.Sound("sounds/shoot.wav")
 mortarSound = pygame.mixer.Sound("sounds/mortar.wav")
-
-ground = pygame.image.load("images/ground.png")
+MortarDrop = pygame.mixer.Sound("sounds/mortardrop.wav")
 font = pygame.font.Font(None, 36)
-
-
-
-
-
-
 
 
 def GetMousePos():
@@ -264,25 +259,28 @@ while True:
 		mortar.xPos += mortar.xVel
 		mortar.yVel += gravity
 		mortar.render(screen)
+		if mortar.xPos > HEIGHT:
+			MortarList.remove(mortar)
+			MortarDrop.play(loops = 0)
+
+
+		for tank in TankList:
+			tank.rect = pygame.Rect(tank.xPos,tank.yPos,tank.width,tank.height)
+			mortar.rect = pygame.Rect(mortar.xPos,mortar.yPos,mortar.width,mortar.height)
+			if mortar.rect.colliderect(tank.rect) or tank.rect.contains(mortar.rect):
+				print('HIT')
+				if tank in TankList:
+					TankList.remove(tank)
+				MortarList.remove(mortar)
+				Score += 2
+				Money += 10
+
 
 	for enemy in EnemyList:
 		enemy.xPos += enemy.xVel
 		if enemy.xPos > WIDTH:
 			EnemyList.remove(enemy)
 			Lives -= 1
-
-		# for projectile in projectileList:
-			# collide = enemy.detectCollisions(projectile.xPos, projectile.yPos, projectile.width, projectile.height, enemy.xPos, enemy.yPos, enemy.width, enemy.height)
-			# if collide:
-			# 	print('HIT')
-			# 	EnemyList.remove(enemy)
-			# 	projectileList.remove(projectile)
-			# 	Score += 1
-			# 	Money += 5
-
-
-
-
 		enemy.render(screen)
 
 
@@ -296,16 +294,37 @@ while True:
 
 		CloudList.append(NewCloud)
 
-		aoeuaoeua = randint(1,2)
+		aoeuaoeua = 1
 
 		for i in range(aoeuaoeua):
 
 			NEX = randint(-100,0)
 			NEY = randint(64,300)
 
-			NewEnemy = Enemy(NEX, NEY, 32, 16)
+			NewEnemy = Enemy(NEX, NEY, 32, 16,'ship')
 
 			EnemyList.append(NewEnemy)
+
+		if randint(1,2) == 1:
+
+			NEX = randint(-100,0)
+			NEY = HEIGHT-16
+
+			NewEnemy = Enemy(NEX, NEY, 32, 16, 'tank')
+
+			TankList.append(NewEnemy)
+
+
+	for tank in TankList:
+
+		tank.xPos += tank.xVel
+		if tank.xPos > WIDTH/2:
+			if tank in TankList:
+				print('bye')
+				TankList.remove(tank)
+				Lives -= 1
+		tank.render(screen)
+
 
 	player.render(screen)
 
