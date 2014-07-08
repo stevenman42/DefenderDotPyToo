@@ -24,14 +24,17 @@ clock = pygame.time.Clock()
 # pygame.event.set_grab(1)
 pygame.mouse.set_visible(0)
 
-
-player = Player((960/2),(640-32),16,32)
+EverythingList = []		# not necessarily everything, just everything that needs to be rendered!
 
 projectileList = []
 CloudList = []
 MortarList = []
 TankList = []
 EnemyList = []
+HeartList = []
+
+player = Player((960/2),(640-32),16,32)
+EverythingList.append(player)
 
 shootCount = 0
 gravity = 2
@@ -46,6 +49,7 @@ LaserIcon = pygame.image.load("images/laser_icon.png")
 ground = pygame.image.load("images/ground.png")
 
 tank = pygame.image.load("images/tank.png")
+helicopter = pygame.image.load("images/helicopter.png")
 
 laser = pygame.mixer.Sound("sounds/shoot.wav")
 mortarSound = pygame.mixer.Sound("sounds/mortar.wav")
@@ -83,6 +87,7 @@ def Shoot():
 			projectile.yVel = -((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(uniform(9.5,10.5))
 
 		projectileList.append(projectile)
+		EverythingList.append(projectile)
 
 		y = HEIGHT-(HEIGHT-player.yPos)-mPos[1]
 
@@ -105,6 +110,7 @@ def Shoot():
 				mortProject.yVel = -((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(uniform(9.5,10.5))
 
 			MortarList.append(mortProject)
+			EverythingList.append(mortProject)
 
 			Money -= 5
 
@@ -112,7 +118,7 @@ def Shoot():
 
 		laser.play(loops = 0)
 
-		for i in [8,10,12]:
+		for i in [10,12,14]:
 
 			projectile = Projectile(player.xPos, player.yPos, 8, 8)
 
@@ -127,6 +133,7 @@ def Shoot():
 				projectile.yVel = -((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/i
 
 			projectileList.append(projectile)
+			EverythingList.append(projectile)
 
 			y = HEIGHT-(HEIGHT-player.yPos)-mPos[1]
 
@@ -170,6 +177,10 @@ while True:
 				ActiveWeapon = 'mortar'
 				ActiveWeaponIcon = MortarIcon
 
+			elif event.key == pygame.K_3:
+
+				ActiveWeapon = 'triple laser'
+
 
 		elif event.type == pygame.KEYUP:
 
@@ -181,13 +192,13 @@ while True:
 # End Keyboard Input #
 
 
-	player.xPos += player.xVel
-	player.yPos += player.yVel
+	# player.xPos += player.xVel
+	# player.yPos += player.yVel
 
-	for projectile in projectileList:
+	# for projectile in projectileList:
 
-		projectile.xPos += projectile.xVel
-		projectile.yPos += projectile.yVel
+		# projectile.xPos += projectile.xVel
+		# projectile.yPos += projectile.yVel
 
 	
 	clict = GetMouseState()
@@ -217,10 +228,8 @@ while True:
 # Text (Score, Lives, Money!) #
 	ScoreText = font.render(str(Score), 1, (10, 10, 10))
 	screen.blit(ScoreText, (10,10))
-
 	LivesText = font.render(str(Lives), 1, (255,10,10))
 	screen.blit(LivesText, (10, 40))
-
 	MoneyText = font.render(str(Money), 1, (80,205,50))
 	screen.blit(MoneyText, (920, 10))
 
@@ -229,20 +238,20 @@ while True:
 
 	screen.blit(ActiveWeaponIcon, (10, 70))
 
-
-
 	for cloud in CloudList:
 
-		cloud.xPos += cloud.xVel
-		cloud.render(screen)
+		# cloud.xPos += cloud.xVel
+		# cloud.render(screen)
 
 		if cloud.xPos >= WIDTH + 128:
 			CloudList.remove(cloud)
+			EverythingList.remove(cloud)
 
 	for projectile in projectileList:
-		projectile.render(screen)
+		# projectile.render(screen)
 		if projectile.yPos < 0 or projectile.xPos < 0 or projectile.xPos > WIDTH:
 			projectileList.remove(projectile)
+			EverythingList.remove(projectile)
 			print(len(projectileList))
 
 		for enemy in EnemyList:
@@ -251,28 +260,47 @@ while True:
 				projectile.rect = pygame.Rect(projectile.xPos,projectile.yPos,projectile.width,projectile.height)
 
 				if projectile.rect.colliderect(enemy.rect) or enemy.rect.contains(projectile.rect):
-					print('HIT')
 					if enemy in EnemyList:
 						# EnemyList.remove(enemy)
 						enemy.yVel = 18
 						HeliHit.play(loops = 0)
-					projectileList.remove(projectile)
+						if randint(1,15) == 1:
+							NewHeart = Heart(enemy.xPos, enemy.yPos, 16,16)
+							HeartList.append(NewHeart)
+							EverythingList.append(NewHeart)
+					if projectile in projectileList:
+						projectileList.remove(projectile)
+					EverythingList.remove(projectile)
 					Score += 1
 					Money += 5
 				if enemy.xPos >= WIDTH + 64:
 					EnemyList.remove(enemy)
+					EverythingList.remove(enemy)
 				if enemy.yPos >= HEIGHT:
 					EnemyList.remove(enemy)
+					EverythingList.remove(enemy)
 			else:
 				pass
 
+		for heart in HeartList:
+			heart.rect = pygame.Rect(heart.xPos,heart.yPos,heart.width,heart.height)
+			projectile.rect = pygame.Rect(projectile.xPos,projectile.yPos,projectile.width,projectile.height)
+
+			if projectile.rect.colliderect(heart.rect):
+				if heart in HeartList:
+					HeartList.remove(heart)
+					EverythingList.remove(heart)
+					Lives += 1
+
+
 	for mortar in MortarList:
-		mortar.yPos += mortar.yVel
-		mortar.xPos += mortar.xVel
+		# mortar.yPos += mortar.yVel
+		# mortar.xPos += mortar.xVel
 		mortar.yVel += gravity
-		mortar.render(screen)
+		# mortar.render(screen)
 		if mortar.yPos > HEIGHT:
 			MortarList.remove(mortar)
+			EverythingList.remove(mortar)
 			MortarDrop.play(loops = 0)
 
 
@@ -280,21 +308,30 @@ while True:
 			tank.rect = pygame.Rect(tank.xPos,tank.yPos,tank.width,tank.height)
 			mortar.rect = pygame.Rect(mortar.xPos,mortar.yPos,mortar.width,mortar.height)
 			if mortar.rect.colliderect(tank.rect) or tank.rect.contains(mortar.rect):
-				print('HIT')
 				if tank in TankList:
 					TankList.remove(tank)
+					EverythingList.remove(tank)
 				MortarList.remove(mortar)
+				EverythingList.remove(mortar)
 				Score += 2
 				Money += 10
 
 
 	for enemy in EnemyList:
-		enemy.xPos += enemy.xVel
-		enemy.yPos += enemy.yVel
+		# enemy.xPos += enemy.xVel
+		# enemy.yPos += enemy.yVel
 		if enemy.xPos > WIDTH:
 			EnemyList.remove(enemy)
+			EverythingList.remove(enemy)
 			Lives -= 1
-		enemy.render(screen)
+		# enemy.render(screen)
+
+	for heart in HeartList:
+		# heart.yPos += heart.yVel
+		if heart.yPos > HEIGHT:
+			HeartList.remove(heart)
+			EverythingList.remove(heart)
+		# heart.render(screen)
 
 
 
@@ -304,15 +341,17 @@ while True:
 		NCY = randint(64, 128)
 		NewCloud = Cloud(NCX, NCY, 128, 64)
 		CloudList.append(NewCloud)
+		EverythingList.append(NewCloud)
 
 		if randint(1,2) == 1:
 
 			NEX = randint(-100,0)
 			NEY = randint(64,300)
 
-			NewEnemy = Enemy(NEX, NEY, 32, 16,'ship')
+			NewEnemy = Enemy(NEX, NEY, 32, 16,'helicopter')
 
 			EnemyList.append(NewEnemy)
+			EverythingList.append(NewEnemy)
 
 		if randint(1,2) == 1:
 
@@ -322,20 +361,26 @@ while True:
 			NewEnemy = Enemy(NEX, NEY, 32, 16, 'tank')
 
 			TankList.append(NewEnemy)
+			EverythingList.append(NewEnemy)
 
 
 	for tank in TankList:
 
-		tank.xPos += tank.xVel
+		# tank.xPos += tank.xVel
 		if tank.xPos > WIDTH/2:
 			if tank in TankList:
-				print('bye')
 				TankList.remove(tank)
+				EverythingList.remove(tank)
 				Lives -= 1
-		tank.render(screen)
+		# tank.render(screen)
+
+	for everything in EverythingList:
+		everything.render(screen)
+		everything.xPos += everything.xVel
+		everything.yPos += everything.yVel
 
 
-	player.render(screen)
+	# player.render(screen)
 
 	pygame.draw.circle(screen, (200, 60, 70), (mPos[0], mPos[1]), 2)
 	pygame.draw.circle(screen, (0,0,0), (mPos[0], mPos[1]),15,2)

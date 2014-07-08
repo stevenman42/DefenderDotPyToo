@@ -69,6 +69,9 @@ class Enemy(Character):
 			self.xVel = 1
 			self.image_location = "images/tank.png"
 			self.tank_img = pygame.image.load(self.image_location)
+		elif self.type == 'helicopter':
+			self.image_location = "images/helicopter.png"
+			self.heli_img = pygame.image.load(self.image_location)
 		# yPos = randint(64,250)
 		Character.__init__(self, xPos, yPos, width, height)
 
@@ -78,6 +81,10 @@ class Enemy(Character):
 		if self.type == 'tank':
 
 			screen.blit(self.tank_img, (self.xPos, self.yPos))
+
+		elif self.type == 'helicopter':
+
+			screen.blit(self.heli_img, (self.xPos, self.yPos))
 
 		else:
 
@@ -127,6 +134,19 @@ class Cloud(Character):
 
 		screen.blit(image, (self.xPos, self.yPos))
 
+class Heart(Character):
 
-		
+	def __init__(self, xPos, yPos, width, height):
+
+		self.xVel = 0
+		self.yVel = 5
+
+
+		Character.__init__(self, xPos, yPos, width, height)
+
+	def render(self, screen):
+
+		pygame.draw.rect(screen, RED, (self.xPos, self.yPos, self.width, self.height))
+
+
 
