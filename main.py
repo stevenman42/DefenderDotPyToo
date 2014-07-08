@@ -50,6 +50,7 @@ tank = pygame.image.load("images/tank.png")
 laser = pygame.mixer.Sound("sounds/shoot.wav")
 mortarSound = pygame.mixer.Sound("sounds/mortar.wav")
 MortarDrop = pygame.mixer.Sound("sounds/mortardrop.wav")
+HeliHit = pygame.mixer.Sound("sounds/helihit.wav")
 font = pygame.font.Font(None, 36)
 
 ActiveWeapon = 'laser'
@@ -252,11 +253,15 @@ while True:
 				if projectile.rect.colliderect(enemy.rect) or enemy.rect.contains(projectile.rect):
 					print('HIT')
 					if enemy in EnemyList:
-						EnemyList.remove(enemy)
+						# EnemyList.remove(enemy)
+						enemy.yVel = 18
+						HeliHit.play(loops = 0)
 					projectileList.remove(projectile)
 					Score += 1
 					Money += 5
 				if enemy.xPos >= WIDTH + 64:
+					EnemyList.remove(enemy)
+				if enemy.yPos >= HEIGHT:
 					EnemyList.remove(enemy)
 			else:
 				pass
@@ -285,6 +290,7 @@ while True:
 
 	for enemy in EnemyList:
 		enemy.xPos += enemy.xVel
+		enemy.yPos += enemy.yVel
 		if enemy.xPos > WIDTH:
 			EnemyList.remove(enemy)
 			Lives -= 1
