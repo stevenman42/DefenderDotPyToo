@@ -7,6 +7,7 @@ pygame.init()
 pygame.mixer.init()
 pygame.font.init()
 
+#test
 
 
 WIDTH = 960
@@ -384,6 +385,7 @@ while True:
 
 	pygame.draw.circle(screen, (200, 60, 70), (mPos[0], mPos[1]), 2)
 	pygame.draw.circle(screen, (0,0,0), (mPos[0], mPos[1]),15,2)
+	# pygame.draw.rect(screen, (0,0,0), (mPos[0] + ))
 
 	clock.tick(60)
 
