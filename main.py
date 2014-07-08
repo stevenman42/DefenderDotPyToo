@@ -110,9 +110,30 @@ def Shoot():
 
 			Money -= 5
 
-		# y = HEIGHT-(HEIGHT-player.yPos)-mPos[1]
+	elif ActiveWeapon == 'triple laser':
 
-		# x = mPos[0]-player.xPos
+		laser.play(loops = 0)
+
+		for i in [8,10,12]:
+
+			projectile = Projectile(player.xPos, player.yPos, 8, 8)
+
+			if projectile.xPos < mPos[0]:
+				projectile.xVel = (mPos[0]-player.xPos)/i
+			elif projectile.xPos > mPos[0]:
+				projectile.xVel = (mPos[0]-player.xPos)/i
+
+			if projectile.yPos < mPos[1]:
+				projectile.yVel = ((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/i
+			elif projectile.yPos > mPos[1]:
+				projectile.yVel = -((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/i
+
+			projectileList.append(projectile)
+
+			y = HEIGHT-(HEIGHT-player.yPos)-mPos[1]
+
+			x = mPos[0]-player.xPos
+
 
 while True:
 
@@ -169,6 +190,8 @@ while True:
 	clict = GetMouseState()
 	mPos = GetMousePos()
 
+# the stuff that happens when you click
+
 	if clict == 1:	# If the user left-clicks:
 		mPos = GetMousePos()	# Retrieve the position of the cursor for processing
 
@@ -201,10 +224,7 @@ while True:
 
 # Weapon Icons #
 
-	screen.blit(ActiveWeaponIcon, (-30, 50))
-
-
-
+	screen.blit(ActiveWeaponIcon, (10, 70))
 
 
 
@@ -216,11 +236,28 @@ while True:
 		if cloud.xPos >= WIDTH + 128:
 			CloudList.remove(cloud)
 
-	for i in projectileList:
-		i.render(screen)
-		if i.yPos < 0 or i.xPos < 0 or i.xPos > WIDTH:
-			projectileList.remove(i)
+	for projectile in projectileList:
+		projectile.render(screen)
+		if projectile.yPos < 0 or projectile.xPos < 0 or projectile.xPos > WIDTH:
+			projectileList.remove(projectile)
 			print(len(projectileList))
+
+		for enemy in EnemyList:
+			if enemy.xPos > -32 and enemy.xPos < WIDTH:
+				enemy.rect = pygame.Rect(enemy.xPos,enemy.yPos,enemy.width,enemy.height)
+				projectile.rect = pygame.Rect(projectile.xPos,projectile.yPos,projectile.width,projectile.height)
+
+				if projectile.rect.colliderect(enemy.rect) or enemy.rect.contains(projectile.rect):
+					print('HIT')
+					if enemy in EnemyList:
+						EnemyList.remove(enemy)
+					projectileList.remove(projectile)
+					Score += 1
+					Money += 5
+				if enemy.xPos >= WIDTH + 64:
+					EnemyList.remove(enemy)
+			else:
+				pass
 
 	for mortar in MortarList:
 		mortar.yPos += mortar.yVel
@@ -234,7 +271,7 @@ while True:
 			EnemyList.remove(enemy)
 			Lives -= 1
 
-		for projectile in projectileList:
+		# for projectile in projectileList:
 			# collide = enemy.detectCollisions(projectile.xPos, projectile.yPos, projectile.width, projectile.height, enemy.xPos, enemy.yPos, enemy.width, enemy.height)
 			# if collide:
 			# 	print('HIT')
@@ -243,17 +280,7 @@ while True:
 			# 	Score += 1
 			# 	Money += 5
 
-			enemy.rect = pygame.Rect(enemy.xPos,enemy.yPos,enemy.width,enemy.height)
-			projectile.rect = pygame.Rect(projectile.xPos,projectile.yPos,projectile.width,projectile.height)
 
-			if projectile.rect.colliderect(enemy.rect):
-				print('HIT')
-				EnemyList.remove(enemy)
-				projectileList.remove(projectile)
-				Score += 1
-				Money += 5
-			if enemy.xPos >= WIDTH + 64:
-				EnemyList.remove(enemy)
 
 
 		enemy.render(screen)
@@ -262,19 +289,23 @@ while True:
 
 
 	if totalFrames % 60 == 0:
-		NCX = randint(-100, 0)
+		NCX = randint(-100, -50)
 		NCY = randint(64, 128)
 
 		NewCloud = Cloud(NCX, NCY, 128, 64)
 
 		CloudList.append(NewCloud)
 
-		NEX = randint(-2000,0)
-		NEY = randint(64,128)
+		aoeuaoeua = randint(1,2)
 
-		NewEnemy = Enemy(NEX, NEY, 32, 16)
+		for i in range(aoeuaoeua):
 
-		EnemyList.append(NewEnemy)
+			NEX = randint(-100,0)
+			NEY = randint(64,300)
+
+			NewEnemy = Enemy(NEX, NEY, 32, 16)
+
+			EnemyList.append(NewEnemy)
 
 	player.render(screen)
 
