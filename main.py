@@ -26,16 +26,29 @@ pygame.mouse.set_visible(0)
 
 
 player = Player((960/2),(640-32),16,32)
+
 projectileList = []
 CloudList = []
+MortarList = []
+
 shootCount = 0
-gravity = 0 # (default: 1.25)
+gravity = 2
 totalFrames = 0
 canShoot = True
 EnemyList = []
 Score = 0
+Lives = 10
+Money = 0
+ActiveWeapon = 'laser'
+
+MortarIcon = pygame.image.load("images/mortar_icon.png")
+LaserIcon = pygame.image.load("images/laser_icon.png")
+
+ActiveWeaponIcon = LaserIcon
 
 laser = pygame.mixer.Sound("sounds/shoot.wav")
+mortarSound = pygame.mixer.Sound("sounds/mortar.wav")
+
 ground = pygame.image.load("images/ground.png")
 font = pygame.font.Font(None, 36)
 
@@ -55,25 +68,51 @@ def GetMouseState():
 	return clict
 
 def Shoot():
-	laser.play(loops = 0)
+	global Money
+	if ActiveWeapon == 'laser':
+		laser.play(loops = 0)
 
-	projectile = Projectile(player.xPos, player.yPos, 8, 8)
+		projectile = Projectile(player.xPos, player.yPos, 8, 8)
 
-	if projectile.xPos < mPos[0]:
-		projectile.xVel = (mPos[0]-player.xPos)/(uniform(9.5,10.5))
-	elif projectile.xPos > mPos[0]:
-		projectile.xVel = (mPos[0]-player.xPos)/(uniform(9.5,10.5))
+		if projectile.xPos < mPos[0]:
+			projectile.xVel = (mPos[0]-player.xPos)/(uniform(9.5,10.5))
+		elif projectile.xPos > mPos[0]:
+			projectile.xVel = (mPos[0]-player.xPos)/(uniform(9.5,10.5))
 
-	if projectile.yPos < mPos[1]:
-		projectile.yVel = ((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(uniform(9.5,10.5))
-	elif projectile.yPos > mPos[1]:
-		projectile.yVel = -((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(uniform(9.5,10.5))
+		if projectile.yPos < mPos[1]:
+			projectile.yVel = ((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(uniform(9.5,10.5))
+		elif projectile.yPos > mPos[1]:
+			projectile.yVel = -((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(uniform(9.5,10.5))
 
-	projectileList.append(projectile)
+		projectileList.append(projectile)
 
-	y = HEIGHT-(HEIGHT-player.yPos)-mPos[1]
+		y = HEIGHT-(HEIGHT-player.yPos)-mPos[1]
 
-	x = mPos[0]-player.xPos
+		x = mPos[0]-player.xPos
+	elif ActiveWeapon == 'mortar':
+
+		if Money >= 5:
+			mortarSound.play(loops = 0)
+
+			mortProject = Projectile(player.xPos, player.yPos, 16, 16)
+
+			if mortProject.xPos < mPos[0]:
+				mortProject.xVel = (mPos[0]-player.xPos)/(uniform(9.5,10.5))
+			elif mortProject.xPos > mPos[0]:
+				mortProject.xVel = (mPos[0]-player.xPos)/(uniform(9.5,10.5))
+
+			if mortProject.yPos < mPos[1]:
+				mortProject.yVel = ((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(uniform(9.5,10.5))
+			elif mortProject.yPos > mPos[1]:
+				mortProject.yVel = -((HEIGHT-(HEIGHT-player.yPos)) - mPos[1])/(uniform(9.5,10.5))
+
+			MortarList.append(mortProject)
+
+			Money -= 5
+
+		# y = HEIGHT-(HEIGHT-player.yPos)-mPos[1]
+
+		# x = mPos[0]-player.xPos
 
 while True:
 
@@ -99,11 +138,23 @@ while True:
 				pygame.quit()
 				sys.exit()
 
+			elif event.key == pygame.K_1:
+
+				ActiveWeapon = 'laser'
+				ActiveWeaponIcon = LaserIcon
+
+			elif event.key == pygame.K_2:
+
+				ActiveWeapon = 'mortar'
+				ActiveWeaponIcon = MortarIcon
+
+
 		elif event.type == pygame.KEYUP:
 
 			if event.key == pygame.K_LEFT:
 
-				player.xVel = 0
+				pass
+				# player.xVel = 0
 
 
 	player.xPos += player.xVel
@@ -113,7 +164,6 @@ while True:
 
 		projectile.xPos += projectile.xVel
 		projectile.yPos += projectile.yVel
-		projectile.yVel += gravity
 
 	
 	clict = GetMouseState()
@@ -137,8 +187,25 @@ while True:
 
 	screen.blit(ground, (0, 0))
 
-	text = font.render(str(Score), 1, (10, 10, 10))
-	screen.blit(text, (10,10))
+
+# Text (Score, Lives, Money!) #
+	ScoreText = font.render(str(Score), 1, (10, 10, 10))
+	screen.blit(ScoreText, (10,10))
+
+	LivesText = font.render(str(Lives), 1, (255,10,10))
+	screen.blit(LivesText, (10, 40))
+
+	MoneyText = font.render(str(Money), 1, (80,205,50))
+	screen.blit(MoneyText, (920, 10))
+
+
+# Weapon Icons #
+
+	screen.blit(ActiveWeaponIcon, (10, 80))
+
+
+
+
 
 
 	for cloud in CloudList:
@@ -155,11 +222,17 @@ while True:
 			projectileList.remove(i)
 			print(len(projectileList))
 
+	for mortar in MortarList:
+		mortar.yPos += mortar.yVel
+		mortar.xPos += mortar.xVel
+		mortar.yVel += gravity
+		mortar.render(screen)
+
 	for enemy in EnemyList:
 		enemy.xPos += enemy.xVel
 		if enemy.xPos > WIDTH:
 			EnemyList.remove(enemy)
-			Score -= 1
+			Lives -= 1
 
 		for projectile in projectileList:
 			collide = enemy.detectCollisions(projectile.xPos, projectile.yPos, projectile.width, projectile.height, enemy.xPos, enemy.yPos, enemy.width, enemy.height)
@@ -168,6 +241,7 @@ while True:
 				EnemyList.remove(enemy)
 				projectileList.remove(projectile)
 				Score += 1
+				Money += 5
 			if enemy.xPos >= WIDTH + 64:
 				EnemyList.remove(enemy)
 
