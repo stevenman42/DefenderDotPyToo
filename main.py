@@ -334,11 +334,7 @@ while True:
 	pygame.draw.circle(screen, (200, 60, 70), (mPos[0], mPos[1]), 2)
 	pygame.draw.circle(screen, (0,0,0), (mPos[0], mPos[1]),12,2)
 
-
 	clock.tick(60)
-
 	shootCount += 1
 	totalFrames += 1
-
 	pygame.display.flip()
-
